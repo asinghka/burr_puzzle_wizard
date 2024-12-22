@@ -1,0 +1,10 @@
+# directories
+cmake-build-debug
+cmake-build-release
+.idea
+bin
+build
+
+# config files
+imgui.ini
+.DS_Store
