@@ -18,9 +18,10 @@ if(WIN32)
 elseif(APPLE)
 	find_package(OpenGL REQUIRED)
 	find_package(SDL2 REQUIRED)
-	set(BURR_PUZZLE_WIZARD_LIBS /Library/Frameworks/SDL2.framework/SDL2 OpenGL::GL /opt/homebrew/lib/libGLEW.dylib)
-	include_directories(${SDL2_INCLUDE_DIRS})
-	include_directories(/opt/homebrew/include)
+	find_package(GLEW REQUIRED)
+
+	set(BURR_PUZZLE_WIZARD_LIBS ${SDL2_LIBRARIES} ${OPENGL_gl_LIBRARY} ${GLEW_LIBRARY})
+	include_directories(${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS})
 endif()
 
 file(GLOB_RECURSE IMGUI_CPP_FILES ${BURR_PUZZLE_WIZARD_INCLUDE_DIR}/imgui/*.c**)
