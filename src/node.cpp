@@ -51,7 +51,8 @@ bool Node::operator<(const Node& other) const
     return _priority > other._priority;
 }
 
-void Node::print_positions() const noexcept {
+void Node::print_positions() const noexcept
+{
     for (size_t i = 0; i < _positions.size(); i++) {
         std::cout << "Piece " << i << ": " << _positions[i].x << ", " << _positions[i].y << ", " << _positions[i].z << " " << std::endl;
     }

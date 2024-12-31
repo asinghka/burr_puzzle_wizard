@@ -180,27 +180,33 @@ public:
         return _num_pieces;
     }
 
-    [[nodiscard]] bool is_solved() const noexcept {
+    [[nodiscard]] bool is_solved() const noexcept
+    {
         return _solved;
     }
 
-    [[nodiscard]] double get_solve_time() const noexcept {
+    [[nodiscard]] double get_solve_time() const noexcept
+    {
         return _solution_time;
     }
 
-    [[nodiscard]] int get_nodes_visited() const noexcept {
+    [[nodiscard]] int get_nodes_visited() const noexcept
+    {
         return _nodes_visited;
     }
 
-    [[nodiscard]] int get_current_solution_state() const noexcept {
+    [[nodiscard]] int get_current_solution_state() const noexcept
+    {
         return _displayed_solution_step;
     }
 
-    [[nodiscard]] int get_solution_size() const noexcept {
+    [[nodiscard]] int get_solution_size() const noexcept
+    {
         return static_cast<int>(_solution.size());
     }
 
-    void set_solution_state(bool next) {
+    void set_solution_state(bool next)
+    {
         if (next) {
             _displayed_solution_step = std::min({_displayed_solution_step + 1, static_cast<int>(_solution.size()) - 1});
         } else {
