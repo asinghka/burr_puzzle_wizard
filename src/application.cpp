@@ -70,13 +70,14 @@ void Application::_new_gui_frame() noexcept
 
     {
         ImGui::Begin("Debug");
-        ImGui::Text("Application framerate (frame time): %.0f FPS\t(%.0f ms)", 1.0f / _delta_time, _delta_time * 1000);
+        ImGui::Text("\nApplication framerate (frame time): %.0f FPS\t(%.0f ms)", 1.0f / _delta_time, _delta_time * 1000);
         ImGui::End();
     }
 
     {
         ImGui::Begin("Control");
 
+        ImGui::Text("\n");
         for (size_t i = 0; i < _wizard.get_num_pieces(); i ++) {
 
             std::string s = std::to_string(i + 1) + ". Piece";
@@ -110,6 +111,31 @@ void Application::_new_gui_frame() noexcept
         
         ImGui::End();
     }
+
+    {
+        ImGui::Begin("Wizard");
+
+        if (!_wizard.is_solved()) {
+            ImGui::Text("\nSolve Puzzle");
+            if (ImGui::Button("Solve")) {
+                _wizard.solve();
+            }
+        } else {
+            ImGui::Text("%s", fmt::format("\nTime to get Solution: {:.2f} ms", _wizard.get_solve_time()).c_str());
+            ImGui::Text("%s", fmt::format("Nodes visited: {}", _wizard.get_nodes_visited()).c_str());
+
+            ImGui::Text("\n");
+            ImGui::Text("Explore Solution");
+            ImGui::SameLine();
+            ImGui::Text("%s", fmt::format("{} / {}", _wizard.get_current_solution_state(), _wizard.get_solution_size()).c_str());
+
+            if (ImGui::Button("Previous")) _wizard.set_solution_state(false);
+            ImGui::SameLine();
+            if (ImGui::Button("Next")) _wizard.set_solution_state(true);
+        }
+
+        ImGui::End();
+    }
 }
 
 void Application::_draw_gui() const noexcept
@@ -140,8 +166,6 @@ void Application::_process_key_input(bool& running) noexcept
         _camera.process_keyboard(CameraMovement::Up, _delta_time);
     if (keystate[SDL_SCANCODE_E] | keystate[SDL_SCANCODE_LCTRL])
         _camera.process_keyboard(CameraMovement::Down, _delta_time);
-    if (keystate[SDL_SCANCODE_F])
-        _wizard.solve();
     if (keystate[SDL_SCANCODE_ESCAPE])
         running = false;
 }
@@ -246,8 +270,6 @@ void Application::init_wizard(const std::filesystem::path& filepath) noexcept
     _wizard.read_puzzle_from_file(filepath);
     _wizard.init_field();
     _wizard.init_start_node();
-
-    _wizard.solve();
 }
 
 void Application::_init_imgui() const noexcept

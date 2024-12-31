@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <sstream>
 #include <fstream>
-#include <iostream>
 #include <queue>
 #include <ranges>
 #include <stack>
@@ -181,8 +180,41 @@ public:
         return _num_pieces;
     }
 
+    [[nodiscard]] bool is_solved() const noexcept {
+        return _solved;
+    }
+
+    [[nodiscard]] double get_solve_time() const noexcept {
+        return _solution_time;
+    }
+
+    [[nodiscard]] int get_nodes_visited() const noexcept {
+        return _nodes_visited;
+    }
+
+    [[nodiscard]] int get_current_solution_state() const noexcept {
+        return _displayed_solution_step;
+    }
+
+    [[nodiscard]] int get_solution_size() const noexcept {
+        return static_cast<int>(_solution.size());
+    }
+
+    void set_solution_state(bool next) {
+        if (next) {
+            _displayed_solution_step = std::min({_displayed_solution_step + 1, static_cast<int>(_solution.size()) - 1});
+        } else {
+            _displayed_solution_step = std::max({_displayed_solution_step - 1, 0});
+        }
+
+        _build_field_from_node(_solution[_displayed_solution_step]);
+        _positions = _solution[_displayed_solution_step].get_positions();
+    }
+
     bool solve() noexcept
     {
+        auto start = std::chrono::high_resolution_clock::now();
+
         std::unordered_set<std::vector<utils::int3>> visited;
         std::unordered_map<Node, Node> parents;
         std::priority_queue<Node> queue;
@@ -205,6 +237,12 @@ public:
                 _solution.push_back(_start);
                 std::ranges::reverse(_solution);
 
+                _solved = true;
+                _nodes_visited = static_cast<int>(visited.size());
+
+                auto end = std::chrono::high_resolution_clock::now();
+                _solution_time = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start).count();
+
                 return true;
             }
 
@@ -224,8 +262,8 @@ private:
     void _build_field_from_node(const Node& node) noexcept
     {
         _field.reset();
-        auto positions = node.get_positions();
-        auto free_pieces = node.get_free_pieces();
+        const auto& positions = node.get_positions();
+        const auto& free_pieces = node.get_free_pieces();
         
         for (size_t i = 0; i < _num_pieces; i++) {
             if (free_pieces[i])
@@ -483,7 +521,7 @@ private:
         std::vector<bool> free_pieces = node.get_free_pieces();
         uint32_t count = static_cast<uint32_t>(std::ranges::count(free_pieces, true));
 
-        return count > _num_pieces - 2;
+        return count >= _num_pieces - 2;
     }
 
 private:
@@ -507,6 +545,10 @@ private:
         {0.0f, 1.0f, 0.0f},
         {0.0f, 0.0f, 1.0f}
     };
-    
+
+    bool _solved = false;
+    double _solution_time = 0.0;
+    int _nodes_visited = 0;
+    int _displayed_solution_step = 0;
     std::vector<Node> _solution;
 };
