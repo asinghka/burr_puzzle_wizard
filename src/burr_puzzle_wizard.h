@@ -288,7 +288,7 @@ private:
         auto free_pieces = node.get_free_pieces();
         const auto& piece_positions = node.get_positions();
         
-        size_t max_component_size = (_dim - static_cast<size_t>(std::ranges::count(free_pieces, true))) / 2;
+        size_t max_component_size = (_num_pieces - static_cast<size_t>(std::ranges::count(free_pieces, true))) / 2;
 
         _add_neighbor_nodes(neighbors, piece_positions, {-1, 0 , 0}, max_component_size, node);
         _add_neighbor_nodes(neighbors, piece_positions, {1, 0 , 0}, max_component_size, node);
@@ -332,7 +332,7 @@ private:
         std::vector<std::vector<int>> strongly_connected_components = _find_strongly_connected_components(graph);
 
         for (auto& component : strongly_connected_components) {
-            if (component.size() <= max_component_size / 2) {
+            if (component.size() <= max_component_size) {
 
                 int max = 0;
                 
