@@ -1,4 +1,5 @@
 #include "node.h"
+#include <iostream>
 
 Node::Node(std::vector<utils::int3> positions, int dim) noexcept
     : _dim(dim), _positions(std::move(positions)) 
@@ -48,6 +49,13 @@ bool Node::operator<(const Node& other) const
 {
     // Reversed as we want the lowest value at the top of the priority queue
     return _priority > other._priority;
+}
+
+void Node::print_positions() const noexcept {
+    for (size_t i = 0; i < _positions.size(); i++) {
+        std::cout << "Piece " << i << ": " << _positions[i].x << ", " << _positions[i].y << ", " << _positions[i].z << " " << std::endl;
+    }
+    std::cout << std::endl;
 }
 
 void Node::_calculate_priority() noexcept

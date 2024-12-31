@@ -246,6 +246,8 @@ void Application::init_wizard(const std::filesystem::path& filepath) noexcept
     _wizard.read_puzzle_from_file(filepath);
     _wizard.init_field();
     _wizard.init_start_node();
+
+    _wizard.solve();
 }
 
 void Application::_init_imgui() const noexcept

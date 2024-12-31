@@ -18,6 +18,8 @@ public:
     [[nodiscard]] bool operator!=(const Node&) const;
     [[nodiscard]] bool operator<(const Node&) const;
 
+    void print_positions() const noexcept;
+
 private:
     void _calculate_priority() noexcept;
     void _calculate_free_pieces() noexcept;

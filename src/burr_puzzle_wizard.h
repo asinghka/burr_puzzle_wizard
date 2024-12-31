@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <sstream>
 #include <fstream>
+#include <iostream>
 #include <queue>
 #include <ranges>
 #include <stack>
@@ -245,18 +246,19 @@ private:
         
         size_t max_component_size = (_dim - static_cast<size_t>(std::ranges::count(free_pieces, true))) / 2;
 
-        _add_neighbor_nodes(neighbors, piece_positions, {-1, 0 , 0}, free_pieces, max_component_size, node);
-        _add_neighbor_nodes(neighbors, piece_positions, {1, 0 , 0}, free_pieces, max_component_size, node);
-        _add_neighbor_nodes(neighbors, piece_positions, {0, -1 , 0}, free_pieces, max_component_size, node);
-        _add_neighbor_nodes(neighbors, piece_positions, {0, 1 , 0}, free_pieces, max_component_size, node);
-        _add_neighbor_nodes(neighbors, piece_positions, {0, 0 , -1}, free_pieces, max_component_size, node);
-        _add_neighbor_nodes(neighbors, piece_positions, {0, 0 , 1}, free_pieces, max_component_size, node);
+        _add_neighbor_nodes(neighbors, piece_positions, {-1, 0 , 0}, max_component_size, node);
+        _add_neighbor_nodes(neighbors, piece_positions, {1, 0 , 0}, max_component_size, node);
+        _add_neighbor_nodes(neighbors, piece_positions, {0, -1 , 0}, max_component_size, node);
+        _add_neighbor_nodes(neighbors, piece_positions, {0, 1 , 0}, max_component_size, node);
+        _add_neighbor_nodes(neighbors, piece_positions, {0, 0 , -1}, max_component_size, node);
+        _add_neighbor_nodes(neighbors, piece_positions, {0, 0 , 1}, max_component_size, node);
         
         return neighbors;
     }
 
-    void _add_neighbor_nodes(std::vector<Node>& neighbors, const std::vector<utils::int3>& piece_positions, utils::int3 direction, std::vector<bool>& free_pieces, size_t max_component_size, const Node& node) const
+    void _add_neighbor_nodes(std::vector<Node>& neighbors, const std::vector<utils::int3>& piece_positions, utils::int3 direction, const size_t max_component_size, const Node& node) const
     {
+        std::vector<bool> free_pieces = node.get_free_pieces();
         std::vector<utils::int3> new_positions = piece_positions;
         std::unordered_map<int, std::vector<int>> graph;
 
@@ -323,6 +325,11 @@ private:
     [[nodiscard]] bool _collides(size_t piece, utils::int3 direction) const noexcept
     {
         utils::int3 new_position_3d = _positions[piece] + direction;
+
+        if (new_position_3d.x < 0 || new_position_3d.x > _dim) return true;
+        if (new_position_3d.y < 0 || new_position_3d.y > _dim) return true;
+        if (new_position_3d.z < 0 || new_position_3d.z > _dim) return true;
+
         int new_position_1d = utils::transform_index_3d_to_1d(new_position_3d, _dim);
 
         std::bitset<N*N*N> temp(_field);
