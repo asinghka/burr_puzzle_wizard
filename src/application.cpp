@@ -78,31 +78,31 @@ void Application::_new_gui_frame() noexcept
         ImGui::Begin("Control");
 
         ImGui::Text("\n");
-        for (size_t i = 0; i < _solver.get_num_pieces(); i ++) {
+        for (size_t i = 0; i < _wizard.get_num_pieces(); i ++) {
 
             std::string s = std::to_string(i + 1) + ". Piece";
             
             if (ImGui::TreeNode(s.c_str())) {
                 if (ImGui::Button(" +x ")) {
-                    _solver.move_piece(i, {1, 0, 0});
+                    _wizard.move_piece(i, {1, 0, 0});
                 }
                 ImGui::SameLine();
                 if (ImGui::Button(" -x ")) {
-                    _solver.move_piece(i, {-1, 0, 0});
+                    _wizard.move_piece(i, {-1, 0, 0});
                 }
                 if (ImGui::Button(" +y ")) {
-                    _solver.move_piece(i, {0, 1, 0});
+                    _wizard.move_piece(i, {0, 1, 0});
                 }
                 ImGui::SameLine();
                 if (ImGui::Button(" -y ")) {
-                    _solver.move_piece(i, {0, -1, 0});
+                    _wizard.move_piece(i, {0, -1, 0});
                 }
                 if (ImGui::Button(" +z ")) {
-                    _solver.move_piece(i, {0, 0, 1});
+                    _wizard.move_piece(i, {0, 0, 1});
                 }
                 ImGui::SameLine();
                 if (ImGui::Button(" -z ")) {
-                    _solver.move_piece(i, {0, 0, -1});
+                    _wizard.move_piece(i, {0, 0, -1});
                 }
 
                 ImGui::TreePop();
@@ -115,23 +115,23 @@ void Application::_new_gui_frame() noexcept
     {
         ImGui::Begin("Wizard");
 
-        if (!_solver.is_solved()) {
+        if (!_wizard.is_solved()) {
             ImGui::Text("\nSolve Puzzle");
             if (ImGui::Button("Solve")) {
-                _solver.solve();
+                _wizard.solve();
             }
         } else {
-            ImGui::Text("%s", fmt::format("\nTime to get Solution: {:.2f} ms", _solver.get_solve_time()).c_str());
-            ImGui::Text("%s", fmt::format("Nodes visited: {}", _solver.get_nodes_visited()).c_str());
+            ImGui::Text("%s", fmt::format("\nTime to get Solution: {:.2f} ms", _wizard.get_solve_time()).c_str());
+            ImGui::Text("%s", fmt::format("Nodes visited: {}", _wizard.get_nodes_visited()).c_str());
 
             ImGui::Text("\n");
             ImGui::Text("Explore Solution");
             ImGui::SameLine();
-            ImGui::Text("%s", fmt::format("{} / {}", _solver.get_current_solution_state(), _solver.get_solution_size()).c_str());
+            ImGui::Text("%s", fmt::format("{} / {}", _wizard.get_current_solution_state(), _wizard.get_solution_size()).c_str());
 
-            if (ImGui::Button("Previous")) _solver.set_solution_state(false);
+            if (ImGui::Button("Previous")) _wizard.set_solution_state(false);
             ImGui::SameLine();
-            if (ImGui::Button("Next")) _solver.set_solution_state(true);
+            if (ImGui::Button("Next")) _wizard.set_solution_state(true);
         }
 
         ImGui::End();
@@ -224,12 +224,12 @@ void Application::_render() const noexcept
     glUniform3f(glGetUniformLocation(_shader_program, "u_view_position"), camera_position.x, camera_position.y, camera_position.z);
     glUniform4f(glGetUniformLocation(_shader_program, "u_color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
-    std::vector<std::vector<utils::int3>> unit_cube_positions = _solver.get_all_unit_cube_global_positions();
+    std::vector<std::vector<utils::int3>> unit_cube_positions = _wizard.get_all_unit_cube_global_positions();
     
-    const float cube_scale = 1.0f / static_cast<float>(_solver.get_dim());
+    const float cube_scale = 1.0f / static_cast<float>(_wizard.get_dim());
     
     for (size_t piece = 0; piece < unit_cube_positions.size(); piece++) {
-        color = _solver.get_color(piece);
+        color = _wizard.get_color(piece);
         
         for (const auto& cube_position : unit_cube_positions[piece]) {
             model = glm::mat4(1.0f);
@@ -265,11 +265,11 @@ void Application::run() noexcept
     }
 }
 
-void Application::init_solver(const std::filesystem::path& filepath) noexcept
+void Application::init_wizard(const std::filesystem::path& filepath) noexcept
 {
-    _solver.read_puzzle_from_file(filepath);
-    _solver.init_field();
-    _solver.init_start_node();
+    _wizard.read_puzzle_from_file(filepath);
+    _wizard.init_field();
+    _wizard.init_start_node();
 }
 
 void Application::_init_imgui() const noexcept

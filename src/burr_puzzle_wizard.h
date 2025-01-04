@@ -54,10 +54,10 @@ namespace std
 }
 
 template <size_t N>
-class BurrPuzzleSolver final
+class BurrPuzzleWizard final
 {
 public:
-    BurrPuzzleSolver() = default;
+    BurrPuzzleWizard() = default;
 
     void read_puzzle_from_file(const std::filesystem::path& path) noexcept
     {
@@ -144,7 +144,7 @@ public:
             auto piece = _puzzle[i];
             const auto& positions = piece.get_unit_cube_positions();
             utils::int3 translation = _positions[i];
-                        
+
             for (size_t j = 0; j < positions.size(); j++) {
                 utils::int3 pos = positions[j] + translation;
                 

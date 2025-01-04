@@ -6,7 +6,7 @@ int main(int argc, char** argv) {
     
     auto app = new Application();
 
-    app->init_solver(file_path);
+    app->init_wizard(file_path);
     app->run();
     
     delete app;

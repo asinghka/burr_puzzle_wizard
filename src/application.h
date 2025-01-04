@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "camera.h"
-#include "burr_puzzle_solver.h"
+#include "burr_puzzle_wizard.h"
 
 class Application final
 {
@@ -13,7 +13,7 @@ public:
     ~Application() noexcept;
     
     void run() noexcept;
-    void init_solver(const std::filesystem::path& filepath) noexcept;
+    void init_wizard(const std::filesystem::path& filepath) noexcept;
     
 private:
     void _create_window();
@@ -35,7 +35,7 @@ private:
 private:
     // TODO: use ptr instead?
     // TODO: templated class nested in non-templated class?
-    BurrPuzzleSolver<48> _solver;
+    BurrPuzzleWizard<48> _wizard;
     
     uint32_t _width;
     uint32_t _height;
