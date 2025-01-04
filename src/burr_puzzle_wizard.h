@@ -19,7 +19,7 @@ namespace std
     {
         size_t operator()(const Node& key) const noexcept
         {
-            std::vector<utils::int3> copy = key.get_key();
+            const std::vector<utils::int3>& copy = key.get_key();
             std::vector<int> copy_int;
 
             for (auto int3 : copy) {
@@ -142,7 +142,7 @@ public:
         for (size_t i = 0; i < _num_pieces; i++) {
 
             auto piece = _puzzle[i];
-            auto positions = piece.get_unit_cube_positions();
+            const auto& positions = piece.get_unit_cube_positions();
             utils::int3 translation = _positions[i];
                         
             for (size_t j = 0; j < positions.size(); j++) {
@@ -285,7 +285,7 @@ private:
     {
         std::vector<Node> neighbors;
         
-        auto free_pieces = node.get_free_pieces();
+        const auto& free_pieces = node.get_free_pieces();
         const auto& piece_positions = node.get_positions();
         
         size_t max_component_size = (_num_pieces - static_cast<size_t>(std::ranges::count(free_pieces, true))) / 2;
@@ -338,16 +338,16 @@ private:
                 
                 for (int unit = 0; unit < _dim; unit++) {
                     if (!_collides(component, piece_positions, direction * unit))
-                        max = -unit;
+                        max = unit;
                     else
                         break;
                 }
 
-                if (max < 0) {
+                if (max != 0) {
                     bool is_piece_in_component_free = false;
 
                     for (int piece : component) {
-                        if (new_positions[piece][dim] + max == (sign == -1 ? 0 : _dim - 1)) {
+                        if (new_positions[piece][dim] + sign * max == (sign == -1 ? 0 : _dim - 1)) {
                             free_pieces[piece] = true;
                             is_piece_in_component_free = true;
                         }
@@ -355,12 +355,12 @@ private:
 
                     for (int piece : component) {
                         if (is_piece_in_component_free)
-                            new_positions[piece][dim] += max;
+                            new_positions[piece][dim] += sign * max;
                         else
                             new_positions[piece][dim] += sign;
                     }
 
-                    neighbors.push_back(Node(new_positions, _dim));
+                    neighbors.emplace_back(new_positions, _dim);
                 }
             }
         }
@@ -422,13 +422,13 @@ private:
         return false;
     }
     
-    [[nodiscard]] std::vector<int> _get_collisions(size_t piece, utils::int3 direction, const Node& node) const noexcept
+    [[nodiscard]] std::vector<int> _get_collisions(size_t piece, const utils::int3 direction, const Node& node) const noexcept
     {
         std::vector<int> collisions;
 
-        auto free_pieces = node.get_free_pieces();
-        auto positions = node.get_positions();
-        auto new_position = positions[piece] + direction;
+        const auto& free_pieces = node.get_free_pieces();
+        const auto& positions = node.get_positions();
+        const auto new_position = positions[piece] + direction;
 
         if (new_position.x >= _dim || new_position.y >= _dim || new_position.z >= _dim) {
             return {};
@@ -524,7 +524,7 @@ private:
     
     [[nodiscard]] bool _is_end_node(const Node& node) const noexcept
     {
-        std::vector<bool> free_pieces = node.get_free_pieces();
+        const std::vector<bool>& free_pieces = node.get_free_pieces();
         uint32_t count = static_cast<uint32_t>(std::ranges::count(free_pieces, true));
 
         return count >= _num_pieces - 2;
