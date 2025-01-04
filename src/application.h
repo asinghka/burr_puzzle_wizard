@@ -4,12 +4,12 @@
 #include <SDL2/SDL.h>
 
 #include "camera.h"
-#include "burr_puzzle_wizard.h"
+#include "burr_puzzle_solver.h"
 
 class Application final
 {
 public:
-    Application(uint32_t width = 1600, uint32_t height = 900) noexcept;
+    explicit Application(uint32_t width = 1600, uint32_t height = 900) noexcept;
     ~Application() noexcept;
     
     void run() noexcept;
@@ -35,7 +35,7 @@ private:
 private:
     // TODO: use ptr instead?
     // TODO: templated class nested in non-templated class?
-    BurrPuzzleWizard<18> _wizard;
+    BurrPuzzleSolver<48> _wizard;
     
     uint32_t _width;
     uint32_t _height;

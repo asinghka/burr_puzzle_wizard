@@ -54,10 +54,10 @@ namespace std
 }
 
 template <size_t N>
-class BurrPuzzleWizard final
+class BurrPuzzleSolver final
 {
 public:
-    BurrPuzzleWizard() = default;
+    BurrPuzzleSolver() = default;
 
     void read_puzzle_from_file(const std::filesystem::path& path) noexcept
     {
